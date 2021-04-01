@@ -60,9 +60,19 @@ public class ArgsDemo {
 
 ## **3. References, Recursion, and Lists**
 
+```
+Walrus a = new Walrus(1000, 8.3);
+Walrus b;
+b = a;
+b.weight = 5;
+```
+改变b的同时会改变a，因为只new了一个Walrus，a和b指向的是同一个东西
 
+不过在声明int之类的基础变量时就直接分配了内存，但是Java在初始化或赋值变量前不能像C那样访问那段无序的内存
 
+<br/>
 
+`int[] x = new int[]{0, 1, 2, 95, 4};` 数组x也是一个指针
 
 
 
