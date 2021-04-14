@@ -75,6 +75,30 @@ b.weight = 5;
 `int[] x = new int[]{0, 1, 2, 95, 4};` 数组x也是一个指针
 
 
+<br/>
+
+-----------------
+<br/>
+
+## **4. SLLists, Nested Classes, Sentinel Nodes**
+
+```
+public class SLList {
+    private IntNode first;
+...
+```
+`private` 使得 `first` 只能在这个class里使用
+
+class 里可以嵌套放 class，嵌套的 class 加上 static 之后不能访问他外面的 class 里的东西
+
+<br/>
+
+![](https://cdn.jsdelivr.net/gh/light-307/pic@main/image/20210414215942.png)
+
+![](https://cdn.jsdelivr.net/gh/light-307/pic@main/image/20210414221801.png)
+
+![](https://cdn.jsdelivr.net/gh/light-307/pic@main/image/20210414221831.png)
+
 
 
 
