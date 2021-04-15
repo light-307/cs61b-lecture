@@ -99,7 +99,22 @@ class 里可以嵌套放 class，嵌套的 class 加上 static 之后不能访�
 
 ![](https://cdn.jsdelivr.net/gh/light-307/pic@main/image/20210414221831.png)
 
+<br/>
 
+-----------------
+<br/>
+
+## **5. DLLists, Arrays**
+
+![](https://cdn.jsdelivr.net/gh/light-307/pic@main/image/20210415200444.png)
+
+![](https://cdn.jsdelivr.net/gh/light-307/pic@main/image/20210415201209.png)
+
+If you need to instantiate a generic over a primitive type, use `Integer`, `Double`, `Character`, `Boolean`, `Long`, `Short`, `Byte`, or `Float` instead of their primitive equivalents.
+
+<br/>
+
+![](https://cdn.jsdelivr.net/gh/light-307/pic@main/image/20210415204642.png)
 
 
 
