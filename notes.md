@@ -116,6 +116,34 @@ If you need to instantiate a generic over a primitive type, use `Integer`, `Doub
 
 ![](https://cdn.jsdelivr.net/gh/light-307/pic@main/image/20210415204642.png)
 
+<br/>
+
+-----------------
+<br/>
+
+## **6. ALists, Resizing, vs. SLists**
+
+用数组来创建一个类似上节SList的东西
+
+默认创建的数组大小可能较小，可以用下面的方式较有效率的增加数组总大小
+
+```
+public void insertBack(int x) {
+    if (size == items.length) {
+           resize(size * RFACTOR);
+    }
+    items[size] = x;
+    size += 1;
+}
+```
+同时为了节省内存，可以在数组利用率小于0.25的时候减半数组大小
+
+Java不允许我们创建泛型对象的数组
+Java does not allow us to create an array of generic objects due to an obscure issue with the way generics are implemented. That is, we cannot do something like:  `Glorp[] items = new Glorp[8];`
+
+Instead, we have to use the awkward syntax shown below: `Glorp[] items = (Glorp []) new Object[8];`
+
+注意 removeLast 的时候要把删掉的 item 置为 null 以节省内存
 
 
 
@@ -123,11 +151,7 @@ If you need to instantiate a generic over a primitive type, use `Integer`, `Doub
 
 
 
-
-
-
-
-
+<br/>
 
 # CS50
 
