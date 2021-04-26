@@ -145,6 +145,60 @@ Instead, we have to use the awkward syntax shown below: `Glorp[] items = (Glorp 
 
 注意 removeLast 的时候要把删掉的 item 置为 null 以节省内存
 
+<br/>
+
+-----------------
+<br/>
+
+## **7. Testing**
+
+`org.junit`库提供了许多有用的方法和有用的功能，以简化`test`程序的编写
+
+例如`org.junit.Assert.assertArrayEquals(expected, input);`
+
+<br/>
+
+可以用一个同名的辅助函数来帮助主要函数实现功能
+```
+/** Sorts strings destructively. */
+public static void sort(String[] x) { 
+   sort(x, 0);
+}
+
+/** Sorts strings destructively starting from item start. */
+private static void sort(String[] x, int start) { 
+   if (start == x.length) {
+       return;
+   }
+   int smallestIndex = findSmallest(x, start);
+   swap(x, start, smallestIndex);
+   sort(x, start + 1);
+}
+```
+
+<br/>
+
+更精简的`test`写法
+```
+import org.junit.Test;
+import static org.junit.Assert.*;
+
+/** Tests the the Sort class. */
+public class TestSort {
+    /** Test the Sort.sort method. */
+    
+    @Test
+    public void testSort() {
+        String[] input = {"i", "have", "an", "egg"};
+        String[] expected = {"an", "egg", "have", "i"};
+
+        Sort.sort(input);
+
+        assertArrayEquals(expected, input);
+    }
+```
+
+
 
 
 
