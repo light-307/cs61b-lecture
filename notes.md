@@ -139,7 +139,7 @@ public void insertBack(int x) {
 同时为了节省内存，可以在数组利用率小于0.25的时候减半数组大小
 
 Java不允许我们创建泛型对象的数组
-Java does not allow us to create an array of generic objects due to an obscure issue with the way generics are implemented. That is, we cannot do something like:  `Glorp[] items = new Glorp[8];`
+Java does not allow us to create an array of generic objects due to an obscure issue with the way generics are implemented. That is, we `cannot` do something like:  `Glorp[] items = new Glorp[8];`
 
 Instead, we have to use the awkward syntax shown below: `Glorp[] items = (Glorp []) new Object[8];`
 
@@ -158,7 +158,7 @@ Instead, we have to use the awkward syntax shown below: `Glorp[] items = (Glorp 
 
 <br/>
 
-可以用一个同名的辅助函数来帮助主要函数实现功能
+可以用一个同名的辅助函数来帮助主要函数实现功能，称之为 `overload`
 ```
 /** Sorts strings destructively. */
 public static void sort(String[] x) { 
@@ -196,7 +196,71 @@ public class TestSort {
 
         assertArrayEquals(expected, input);
     }
+}
 ```
+
+<br/>
+
+### Java Integer 类中 128 陷阱  
+在整数的包装类当中，在第一次创建 Integer 类的对象的时候，都会首先创建好缓存数组。当需要包装的值是在 IntegerCache 数组当中的元素的时候，就会返回数组当中的 Integer 对象。而当超出缓存数组的时候，就会创建新的对象。JVM 默认设置数组的范围为 -128 ~ 127  
+所以小于128的调用的是缓存数组中的对象，两个一样大的数是同一个对象。而大于128的是新建的对象，两者地址不一样，不能直接用 `==` 比较，要用 `equals()` 方法
+
+<br/>
+
+-----------------
+<br/>
+
+## **8. Inheritance, Implements**
+
+### `interface` and `implements ` 
+```
+//前面几个是Interface Inheritance，最后一个是Implementation Inheritance
+//注意default关键字。Implementation Inheritance中可以使用前面的方法。
+
+public interface List61B<Item> {
+    public void addFirst(Item x);
+    public void add Last(Item y);
+    public Item getFirst();
+    public Item getLast();
+    public Item removeLast();
+    public Item get(int i);
+    public void insert(Item x, int position);
+    public int size();
+
+    default public void print() {
+        for (int i = 0; i < size(); i += 1) {
+            System.out.print(get(i) + " ");
+        }
+        System.out.println();
+    }
+}
+```  
+```
+public class AList<Item> implements List61B<Item>{...}
+
+public class SList<Item> implements List61B<Item>{...}
+```
+之后针对 List61B 写的方法对 AList 和 SList 都适用  
+AList 中的方法会 `override` List61B 中的同名方法。可以加上 `@Override` 做个标注并且用于检查函数名有没有写错
+
+<br/>
+
+```
+public static void main(String[] args) {
+    List61B<String> someList = new SLList<String>();
+    someList.addFirst("elk");
+}
+```
+以上代码可以正常运行。因为 SLList 也是 List61B，可以把 SLList 的地址存在  List61B 变量中。同时因为 someList 里实际放的是 SLList，SLList 已经实现了 addFirst 方法，所以最后一行也可以正常运行  
+换句话说，List61B 是 `static type`，SLList 是 `dynamic type`。调用函数的时候遵循 `dynamic method selection`  
+`dynamic method selection` 适用于 `override` 而不是 `overload`。即在在考虑选择同名不同输入参数的函数的时候，根据是 `static type`。
+
+
+
+
+
+
+
 
 
 
