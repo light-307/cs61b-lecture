@@ -253,7 +253,202 @@ public static void main(String[] args) {
 ```
 以上代码可以正常运行。因为 SLList 也是 List61B，可以把 SLList 的地址存在  List61B 变量中。同时因为 someList 里实际放的是 SLList，SLList 已经实现了 addFirst 方法，所以最后一行也可以正常运行  
 换句话说，List61B 是 `static type`，SLList 是 `dynamic type`。调用函数的时候遵循 `dynamic method selection`  
-`dynamic method selection` 适用于 `override` 而不是 `overload`。即在在考虑选择同名不同输入参数的函数的时候，根据是 `static type`。
+`dynamic method selection` 适用于 `override` 而不是 `overload`。即在在考虑选择同名不同输入参数的函数的时候，根据是 `static type`。  
+然后编译器判断有没有出错的根据是 `static type` 。
+
+`static type` = `compile-time type`  
+`dynamic type` = `run-time type`
+
+**先根据 `static type` 进行 `overload`（选择不同输入的同名函数），再根据 `dynamic type` 进行 `override`（子类重载）**
+
+<br/>
+
+-----------------
+<br/>
+
+## **9. Extends, Casting, Higher Order Functions**
+
+```
+//继承所有 SLList 有的东西（除了构造函数），并且可以加其他的东西
+//不过不能访问父类里的 private 的东西，
+//所以在 Override 的时候需要用 super.removeLast() 调用父类的方法，再对其做改动
+
+public class VengefulSLList<Item> extends SLList<Item> {
+    SLList<Item> deletedItems;
+
+    public VengefulSLList() {
+        deletedItems = new SLList<Item>();
+    }
+
+    @Override
+    public Item removeLast() {
+        Item x = super.removeLast();
+        deletedItems.addLast(x);
+        return x;
+    }
+
+    /** Prints deleted items. */
+    public void printLostItems() {
+        deletedItems.print();
+    }
+}
+```
+
+```
+public VengefulSLList() {
+    super();   //调用父类的构造函数。就算不写这句，子类的构造函数也会默认先隐式调用这个
+    deletedItems = new SLList<Item>();
+}
+
+
+public VengefulSLList(Item x) {
+    super(x);    //如果子类构造函数要加参数的话必须写这句
+    deletedItems = new SLList<Item>();
+}
+```
+
+所有类都是 `Object` 的子类。interface 不是class
+
+the `Object` class provides operations that every Object should be able to do - like `.equals(Object obj)`, `.hashCode()`, and `toString()`.
+
+继承和 `Override` 有可能会破坏封装，导致无限循环调用之类的
+
+<br/>
+
+```
+// compile-time type 的类型转换
+//Right hand side has compile-time type Poodle after casting
+
+Poodle largerPoodle = (Poodle) maxDog(frank, frankJr);
+```
+
+<br/>
+
+-----------------
+<br/>
+
+## **10. Subtype Polymorphism vs. HoFs**
+
+![](https://cdn.jsdelivr.net/gh/light-307/pic@main/image/20210512154217.png)
+
+
+<br/>
+
+-----------------
+<br/>
+
+## **11. Exceptions, Iterators, Object Methods**
+
+```
+// Lists in Real Java Code
+
+import java.util.List;
+import java.util.ArrayList;
+
+public class Example {
+    public static void main(String[] args) {
+        List<Integer> L = new ArrayList<>();
+        L.add(5);
+        L.add(10);
+        System.out.println(L);
+    }
+}
+```
+
+```
+//Sets
+
+import java.util.Set;
+import java.util.HashSet;
+
+Set<String> s = new HashSet<>();
+s.add("Tokyo");
+s.add("Lagos");
+System.out.println(S.contains("Tokyo")); // true
+```
+<br/>
+
+`System.out.println(Object x)` calls `x.toString()`
+
+```
+public String toString() {
+    String returnString = "{";
+    for (int i = 0; i < size; i += 1) {
+        returnString += keys[i];
+        returnString += ", ";
+    }
+    returnString += "}";
+    return returnString;
+}
+
+//在迭代里使用 + 连接字符串效率很低，因为每次操作都在新建一个更长的字符串
+//下面这个用 StringBuilder 的效果更好，它的字符串操作是线性的
+
+public String toString() {
+    StringBuilder returnSB = new StringBuilder("{");
+    for (int i = 0; i < size - 1; i += 1) {
+        returnSB.append(items[i].toString());
+        returnSB.append(", ");
+    }
+    returnSB.append(items[size - 1]);
+    returnSB.append("}");
+    return returnSB.toString();
+}
+
+//下面这个耗时大概是上面那个的2倍，不过看起来更简洁
+
+public String toString() {
+    list<String> listOfItems = new ArrayList<>();
+    for (T x : this) {
+        listOfItems.add(x.toString());
+    }
+    return "{" + String.join(",", listOfItems) + "}";
+}
+
+```
+
+```
+//考虑边界条件的比较完备的 equal 方法
+
+public boolean equals(Object other) {
+        if (this == other) {
+            return true;
+        }
+        if (other == null) {
+            return false;
+        }
+        if (other.getClass() != this.getClass()) {
+            return false;
+        }
+        ArraySet<T> o = (ArraySet<T>) other;
+        if (o.size() != this.size()) {
+            return false;
+        }
+        for (T item : this) {
+            if (!o.contains(item)) {
+                return false;
+            }
+        }
+        return true;
+    }
+```
+
+```
+//做到类似 Set<Integer> javaset = Set.of(5, 23, 42); 的事
+
+public static <Glerp> ArraySet<Glerp> of(Glerp... stuff) {
+    ArraySet<Glerp> returnSet = new ArraySet<Glerp>();
+    for (Glerp x : stuff) {
+        returnSet.add(x);
+    }
+    return returnSet;
+}
+```
+
+
+
+
+
 
 
 
