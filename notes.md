@@ -2,7 +2,7 @@
 
 ## **1. Intro, Hello World Java**
 
-```
+```java
 public class HelloWorld {
     public static void main(String[] args) {
         System.out.println("Hello world!");
@@ -19,7 +19,7 @@ public class HelloWorld {
 
 * Static vs. Non-Static Methods
 
-```
+```java
 public class Dog {
     public static void makeNoise() {
         System.out.println("Bark!");
@@ -28,7 +28,7 @@ public class Dog {
 ```
 以上单独不能编译，但是可以在另一个`class`里的`main`调用，然后一起编译
 
-```
+```java
 public class DogLauncher {
     public static void main(String[] args) {
         Dog.makeNoise();
@@ -45,7 +45,7 @@ Static vs. Instance methods. The distinction between static and instance methods
 * 在Java里`args[0]`是不包括程序名字的第一个参数
 
 所以输入`java ArgsDemo these are`输出`these`
-```
+```java
 public class ArgsDemo {
     public static void main(String[] args) {
         System.out.println(args[0]);
@@ -60,7 +60,7 @@ public class ArgsDemo {
 
 ## **3. References, Recursion, and Lists**
 
-```
+```java
 Walrus a = new Walrus(1000, 8.3);
 Walrus b;
 b = a;
@@ -82,7 +82,7 @@ b.weight = 5;
 
 ## **4. SLLists, Nested Classes, Sentinel Nodes**
 
-```
+```java
 public class SLList {
     private IntNode first;
 ...
@@ -127,7 +127,7 @@ If you need to instantiate a generic over a primitive type, use `Integer`, `Doub
 
 默认创建的数组大小可能较小，可以用下面的方式较有效率的增加数组总大小
 
-```
+```java
 public void insertBack(int x) {
     if (size == items.length) {
            resize(size * RFACTOR);
@@ -159,7 +159,7 @@ Instead, we have to use the awkward syntax shown below: `Glorp[] items = (Glorp 
 <br/>
 
 可以用一个同名的辅助函数来帮助主要函数实现功能，称之为 `overload`
-```
+```java
 /** Sorts strings destructively. */
 public static void sort(String[] x) { 
    sort(x, 0);
@@ -179,7 +179,7 @@ private static void sort(String[] x, int start) {
 <br/>
 
 更精简的`test`写法
-```
+```java
 import org.junit.Test;
 import static org.junit.Assert.*;
 
@@ -213,7 +213,7 @@ public class TestSort {
 ## **8. Inheritance, Implements**
 
 ### `interface` and `implements ` 
-```
+```java
 //前面几个是Interface Inheritance，最后一个是Implementation Inheritance
 //注意default关键字。Implementation Inheritance中可以使用前面的方法。
 
@@ -235,7 +235,7 @@ public interface List61B<Item> {
     }
 }
 ```  
-```
+```java
 public class AList<Item> implements List61B<Item>{...}
 
 public class SList<Item> implements List61B<Item>{...}
@@ -245,7 +245,7 @@ AList 中的方法会 `override` List61B 中的同名方法。可以加上 `@Ove
 
 <br/>
 
-```
+```java
 public static void main(String[] args) {
     List61B<String> someList = new SLList<String>();
     someList.addFirst("elk");
@@ -268,7 +268,7 @@ public static void main(String[] args) {
 
 ## **9. Extends, Casting, Higher Order Functions**
 
-```
+```java
 //继承所有 SLList 有的东西（除了构造函数），并且可以加其他的东西
 //不过不能访问父类里的 private 的东西，
 //所以在 Override 的时候需要用 super.removeLast() 调用父类的方法，再对其做改动
@@ -294,7 +294,7 @@ public class VengefulSLList<Item> extends SLList<Item> {
 }
 ```
 
-```
+```java
 public VengefulSLList() {
     super();   //调用父类的构造函数。就算不写这句，子类的构造函数也会默认先隐式调用这个
     deletedItems = new SLList<Item>();
@@ -315,7 +315,7 @@ the `Object` class provides operations that every Object should be able to do - 
 
 <br/>
 
-```
+```java
 // compile-time type 的类型转换
 //Right hand side has compile-time type Poodle after casting
 
@@ -340,7 +340,7 @@ Poodle largerPoodle = (Poodle) maxDog(frank, frankJr);
 ## **11. Exceptions, Iterators, Object Methods**
 
 * **Exceptions  throw  catch**
-```
+```java
 throw new RuntimeException("For no reason.");
 
 try {
@@ -353,7 +353,7 @@ System.out.println("Hello World!");
 
 
 
-```
+```java
 // Lists in Real Java Code
 
 import java.util.List;
@@ -369,7 +369,7 @@ public class Example {
 }
 ```
 
-```
+```java
 //Sets
 
 import java.util.Set;
@@ -385,7 +385,7 @@ System.out.println(S.contains("Tokyo")); // true
 
 * **Iterable  Iterator**
 
-```
+```java
 public interface Iterable<T> {
     Iterator<T> iterator();
 }
@@ -396,7 +396,7 @@ public interface Iterator<T> {
 }
 ```
 
-```
+```java
 import java.util.Iterator;
 
 public class ArraySet<T> implements Iterable<T> {
@@ -479,7 +479,7 @@ public class ArraySet<T> implements Iterable<T> {
 
 `System.out.println(Object x)` calls `x.toString()`
 
-```
+```java
 public String toString() {
     String returnString = "{";
     for (int i = 0; i < size; i += 1) {
@@ -516,7 +516,7 @@ public String toString() {
 
 ```
 
-```
+```java
 //考虑边界条件的比较完备的 equal 方法
 
 public boolean equals(Object other) {
@@ -542,7 +542,7 @@ public boolean equals(Object other) {
     }
 ```
 
-```
+```java
 //做到类似 Set<Integer> javaset = Set.of(5, 23, 42); 的事
 
 public static <Glerp> ArraySet<Glerp> of(Glerp... stuff) {
@@ -571,222 +571,183 @@ public static <Glerp> ArraySet<Glerp> of(Glerp... stuff) {
 
 ## **13. Asymptotics I**
 
-![](https://cdn.jsdelivr.net/gh/light-307/pic@main/image/20210518171328.png)
-
-
-
-
-
-
-
-
-
-
-
-
-<br/>
-
-# CS50
-
-## **week2_Arrays**
-
-* it turns out that a string ends with a special character, ‘\0’, or a byte with all bits set to 0. This character is called the null character, or null terminating character. So we actually need four bytes to store our string “HI!”:
-
-![](https://cdn.jsdelivr.net/gh/light266/pic@main/study/memory_with_string.png)
+![](https://cdn.jsdelivr.net/gh/light-307/pic@main/image/20210526155210.png)
 
 <br/>
 
 -----------------
 <br/>
 
-## **week3_Algorithms**
+## **14. Disjoint Sets**
 
-* Merge sort
+![](https://cdn.jsdelivr.net/gh/light-307/pic@main/image/20210521172318.png)
 
-![](https://cdn.jsdelivr.net/gh/light266/pic@main/study/Merge_sort.jpg)
+![](https://cdn.jsdelivr.net/gh/light-307/pic@main/image/20210521172155.png)
 
-* 注意**递归算法**
+![](https://cdn.jsdelivr.net/gh/light-307/pic@main/image/20210521171937.png)
 
-<br/>
 
------------------
-<br/>
 
-## **week4_Memory**
-```
-typedef char *string;
-```
+Weighted Quick Union with Path Compression
+```java
+import java.util.ArrayList;
 
-C 库函数 void *malloc(size_t size) 分配所需的内存空间，并返回一个指向它的指针。
+public class UnionFind {
+    int[] parent;
 
-valgrind ./copy2   可以用来检查程序使用和释放的内存
-
-程序的内存分布
-![程序的内存](https://cdn.jsdelivr.net/gh/light266/pic@main/study/20201215202633.png)
-
-所有JPG图的开头3个字节都是 FF D8 FF
-
-<br/>
-
------------------
-<br/>
-
-## **week5_Data_Structures**
-
-`int *y` 这样的初始化实际并没有赋值
-没有给y赋值，y没有具体指向的位置，所以`*y=13`那里是错的
-![](https://cdn.jsdelivr.net/gh/light266/pic@main/study/20201221143029.png)
-
-### **malloc()和calloc()**
-
-    malloc()函数有一个参数,即要分配的内存空间的大小:
-    void *malloc(size_t size);
-
-    calloc()函数有两个参数,分别为元素的数目和每个元素的大小,这两个参数的乘积就是要分配的内存空间的大小。
-    void *calloc(size_t numElements,size_t sizeOfElement);
-
-    如果调用成功,函数malloc()和函数calloc()都将返回所分配的内存空间的首地址。
-
-    函数calloc()会将所分配的内存空间中的每一位都初始化为零，而malloc()不会
-
-<br/>
-
-nul是\0   null是0x0
-
-<br/>
-
-a linked list struct in C
-![](https://cdn.jsdelivr.net/gh/light266/pic@main/study/20201221160933.png)
-
-`(*n).number = 2;` 和 `n->number = 2;` 等价
-
-```
-// Print list
-for (node *tmp = list; tmp != NULL; tmp = tmp->next)
-{
-    printf("%i\n", tmp->number);
-}
-```
-
-二分法搜索  在tree结构里
-```
-bool search(node *tree)
-{
-    if (tree == NULL)
-    {
-        return false;
+    /* Creates a UnionFind data structure holding n vertices. Initially, all
+       vertices are in disjoint sets. */
+    public UnionFind(int n) {
+        parent = new int[n];
+        // set all the parents to be -1 to symbolize that they are disjoint
+        for (int i = 0; i < n; i++) {
+            parent[i] = -1;
+        }
     }
-    else if (50 < tree->number)
-    {
-        return search(tree->left);
+
+    /* Throws an exception if v1 is not a valid vertex. */
+    private void validate(int v1) {
+        if (v1 < 0 || v1 >= parent.length) {
+            throw new IllegalArgumentException("Not a valid vertex!");
+        }
     }
-    else if (50 > tree->number)
-    {
-        return search(tree->right);
+
+    /* Returns the size of the set v1 belongs to. */
+    public int sizeOf(int v1) {
+        int root = find(v1);
+        return -1 * parent[root];
     }
-    else
-    {
-        return true;
+
+    /* Returns the parent of v1. If v1 is the root of a tree, returns the
+       negative size of the tree for which v1 is the root. */
+    public int parent(int v1) {
+        validate(v1);
+        return parent[v1];
+    }
+
+    /* Returns true if nodes v1 and v2 are connected. */
+    public boolean isConnected(int v1, int v2) {
+        return find(v1) == find(v2);
+    }
+
+    /* Connects two elements v1 and v2 together. v1 and v2 can be any valid 
+       elements, and a union-by-size heuristic is used. If the sizes of the sets
+       are equal, tie break by connecting v1's root to v2's root. Connecting a
+       vertex with itself or vertices that are already connected should not 
+       change the sets but may alter the internal structure of the data. */
+    public void connect(int v1, int v2) {
+        int i = find(v1);
+        int j= find(v2);
+        if (i != j) {
+            if (parent[i] >= parent[j]) {
+                parent[j] = parent[i] + parent[j];
+                parent[i] = j;
+            }
+            else {
+                parent[i] = parent[i] + parent[j];
+                parent[j] = i;
+            }
+        }
+    }
+
+    /* Returns the root of the set v1 belongs to. Path-compression is employed
+       allowing for fast search-time. */
+    public int find(int v1) {
+        int p = v1;
+        int tmp = v1;
+        while (parent(p) >= 0) {
+            p = parent(p);
+        }
+        while (parent(v1) >= 0) {
+            tmp = v1;
+            v1 = parent(v1);
+            parent[tmp] = p;
+        }
+        return p;
     }
 }
 ```
 
 <br/>
 
-* hash tables  按前几个字母的顺序，把东西扔进不同的盒子，从而近似得到O(1)
-
-* tries   真正的O(1)，但是消耗大量存储空间
-![](https://cdn.jsdelivr.net/gh/light266/pic@main/study/20201221203942.png)
-
-* queue  一个FIFO(first in, first out)的数据结构
-* stack  LIFO
-
-<br/>
-
 -----------------
 <br/>
 
-## **week6_Python**
+## **15. Asymptotics II**
 
-* 在循环或者条件语句里面被定义的变量可以在外面后面使用（Python可以，C不行）
+![](https://cdn.jsdelivr.net/gh/light-307/pic@main/image/20210525203806.png)
 
-    Python和C 在函数里面定义的变量都不能跨函数使用
 
-* 可以用这种形式写Python，有内容的主函数在前面，然后是一堆子函数，最后放个`main()`
-```
-def main():
-    cough(3)
+This is the essence of **merge sort**:
+- If the list is size 1, return. Otherwise:
+- Mergesort the left half
+- Mergesort the right half
+- Merge the results
 
-def cough(n):
-    for i in range(n):
-        print("cough")
+the overall runtime is **Θ(NlogN)**
 
-main()
-```
 
-python可以用这种类似 `%s` 的 `print(f"Average: {scores}")` 注意里面有个 `f`
 
-`print(c, end="")` 普通的print末尾自带'\n'
 
-dictionary in python
-```
-# dictionary in python
 
-people = {
-    "EMMA": "617-555-0100",
-    "RODRIGO": "617-555-0101",
-    "BRIAN": "617-555-0102",
-    "DAVID": "617-555-0103"
-}
 
-# Search for EMMA
-if "EMMA" in people:
-    print(f"Found {people['EMMA']}")
-```
 
-python 里没有char，所以用 `"` 和 `'` 都可以，除非在 `" "` 里套 `' '` 用作区分
 
-`s[i:j]` 取字符串的第i个至第j个（不包括j的那个）
+
+
+
 
 <br/>
 
------------------
-<br/>
+# Markdown 基础语法
 
-## **week7_SQL**
+Markdown 目录：
+[TOC]
 
-可以直接用 `sorted` 来排序；`lambda item: item[1]` 定义了一个一行的函数，输入是item，输出是item[1]
-```
-for title, count in sorted(counts.items(), key=lambda item: item[1], reverse=True):
-    print(title, count, sep=" | ")
-```
+Markdown 标题：
+# 这是 H1
+## 这是 H2
+### 这是 H3
 
-**SQL**: Structured Query Language
+Markdown 列表：
+- 列表项目
+1. 列表项目
 
-<br/>
+*斜体*或_斜体_
+**粗体**
+***加粗斜体***
+~~删除线~~
 
------------------
-<br/>
+Markdown 插入链接：
+[链接文字](链接网址 "标题")
 
-## **week8_HTML, CSS, JavaScript**
+Markdown 插入图片：
+![alt text](/path/to/img.jpg "Title")
 
-<br/>
+Markdown 插入代码块：
+    ```python
+    #!/usr/bin/python3
+    print("Hello, World!");
+    ```
 
------------------
-<br/>
+Markdown 引用：
+> 引用内容
 
-## **week9_Flask**
+Markdown 分割线：
+---
 
-在python里，`__name__` 表示当前文件的文件名
+Markdown 换行：
+<br>
 
-永远不要相信你的用户，他们总是会整出各种骚操作233
+Markdown 段首缩进：
+&ensp; or &#8194; 表示一个半角的空格
+&emsp; or &#8195;  表示一个全角的空格
+&emsp;&emsp; 两个全角的空格（用的比较多）
+&nbsp; or &#160; 不断行的空白格
 
-<br/>
 
------------------
-<br/>
 
-## **week10_Ethics**
+
 
 
 -----------------
