@@ -686,9 +686,63 @@ This is the essence of **merge sort**:
 
 the overall runtime is **Θ(NlogN)**
 
+<br/>
 
+-----------------
+<br/>
 
+## **16. ADTs, Sets, Maps, BSTs**
 
+**Binary Search Trees  二叉树**
+![](https://cdn.jsdelivr.net/gh/light-307/pic@main/image/20210528145451.png)
+
+删除操作：
+没有下级的直接删；
+有一个下级的让上级指向下级；
+有两个下级的，找到它的一堆下级中的左边的最大值或者右边的最小值，删掉那个值，然后用那个值替换它
+
+```java
+private class BST<Key> {
+    private Key key;
+    private BST left;
+    private BST right;
+
+    public BST(Key key, BST left, BST Right) {
+        this.key = key;
+        this.left = left;
+        this.right = right;
+    }
+
+    public BST(Key key) {
+        this.key = key;
+    }
+
+    static BST find(BST T, Key sk) {
+        if (T == null)
+            return null;
+        if (sk.equals(T.key))
+            return T;
+        else if (sk ≺ T.key)
+            return find(T.left, sk);
+        else
+            return find(T.right, sk);
+    }
+
+    static BST insert(BST T, Key ik) {
+        if (T == null)
+            return new BST(ik);
+        if (ik ≺ T.key)
+            T.left = insert(T.left, ik);
+        else if (ik ≻ T.key)
+            T.right = insert(T.right, ik);
+        return T;
+    }
+
+    static void delete(Key ik) {
+        //TODO
+    }
+}
+```
 
 
 
