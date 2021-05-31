@@ -580,12 +580,19 @@ public static <Glerp> ArraySet<Glerp> of(Glerp... stuff) {
 
 ## **14. Disjoint Sets**
 
+ListOfSetsDS  用一堆 List 存放各类 sets
+QuickFindDS   用数组存，同一类随便给同样的某个数
+QuickUnionDS  用数组存，里面放上一级的序号，做成像树一样的
+WeightedQuickUnionDS  用数组存，里面放上一级的序号，做成像树一样的，小的树挂到大的树的根下面
+WeightedQuickUnionDSWithPathCompression  用数组存，里面放上一级的序号，做成像树一样的，小的树挂到大的树的根下面。每次查找都把路过的元素直接挂到最上级的根下面
+
 ![](https://cdn.jsdelivr.net/gh/light-307/pic@main/image/20210521172318.png)
 
 ![](https://cdn.jsdelivr.net/gh/light-307/pic@main/image/20210521172155.png)
 
-![](https://cdn.jsdelivr.net/gh/light-307/pic@main/image/20210521171937.png)
+![](https://cdn.jsdelivr.net/gh/light-307/pic@main/image/20210531163743.png)
 
+![](https://cdn.jsdelivr.net/gh/light-307/pic@main/image/20210531163838.png)
 
 
 Weighted Quick Union with Path Compression
@@ -743,6 +750,17 @@ private class BST<Key> {
     }
 }
 ```
+
+
+
+
+
+
+
+
+
+
+
 
 
 
