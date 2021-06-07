@@ -331,6 +331,15 @@ Poodle largerPoodle = (Poodle) maxDog(frank, frankJr);
 
 ![](https://cdn.jsdelivr.net/gh/light-307/pic@main/image/20210512154217.png)
 
+```java
+/* 如果指定的数与参数相等返回0。
+*  如果指定的数小于参数返回 -1。
+*  如果指定的数大于参数返回 1。 */
+public interface Comparable<T> {
+     public int compareTo(T obj);
+}
+```
+
 
 <br/>
 
@@ -745,22 +754,121 @@ private class BST<Key> {
         return T;
     }
 
-    static void delete(Key ik) {
-        //TODO
+    /** Delete the instance of label L from T that is closest to
+    * to the root and return the modified tree. The nodes of
+    * the original tree may be modified. */
+    public static BST remove(BST T, int L) {
+        if (T == null)
+            return null;
+        if (L < T.label)
+            T.left = remove(T.left, L);
+        else if (L > T.label)
+            T.right = remove(T.right, L);
+        // Otherwise, we’ve found L
+        else if (T.left == null)
+            return T.right;
+        else if (T.right == null)
+            return T.left;
+        else
+            T.right = swapSmallest(T.right, T);
+        return T;
+    }
+    /** Move the label from the first node in T (in an inorder
+    * traversal) to node R (over-writing the current label of R),
+    * remove the first node of T from T, and return the resulting tree.
+    */
+    private static BST swapSmallest(BST T, BST R) {
+        if (T.left == null) {
+            R.label = T.label;
+            return T.right;
+        } else {
+            T.left = swapSmallest(T.left, R);
+            return T;
+        }
     }
 }
 ```
 
+<br/>
+
+-----------------
+<br/>
+
+## **17. B-Trees (2-3, 2-3-4 Trees)**
+
+![](https://cdn.jsdelivr.net/gh/light-307/pic@main/image/20210601172457.png)
+
+![](https://cdn.jsdelivr.net/gh/light-307/pic@main/image/20210601172231.png)
+
+A B-tree has the following helpful invariants:
+* All leaves must be the same distance from the source.
+* A non-leaf node with k items must have exactly k+1 children.
+
+In tandem, these invariants cause the tree to always be **bushy**.
+
+![](https://cdn.jsdelivr.net/gh/light-307/pic@main/image/20210601172538.png)
 
 
+<br/>
 
+-----------------
+<br/>
 
+## **18. Red Black Trees**
 
+![](https://cdn.jsdelivr.net/gh/light-307/pic@main/image/20210602182257.png)
 
+![](https://cdn.jsdelivr.net/gh/light-307/pic@main/image/20210607150434.png)
 
+![](https://cdn.jsdelivr.net/gh/light-307/pic@main/image/20210607152526.png)
 
+* **操作例子**
+* 插入都用红线
+<img src="https://cdn.jsdelivr.net/gh/light-307/pic@main/image/20210607162645.png" style="zoom: 25%;"/>
+* 右倾的转成左倾
+<img src="https://cdn.jsdelivr.net/gh/light-307/pic@main/image/20210607162836.png" style="zoom: 25%;"/>
+* 暂时的两根红线
+<img src="https://cdn.jsdelivr.net/gh/light-307/pic@main/image/20210607163034.png" style="zoom: 25%;"/>
+* 插入的调整
+<img src="https://cdn.jsdelivr.net/gh/light-307/pic@main/image/20210607164256.png" style="zoom: 25%;"/>
+* 两根红线的调整
+<img src="https://cdn.jsdelivr.net/gh/light-307/pic@main/image/20210607164826.png" style="zoom: 25%;"/>
+* 右倾的转成左倾
+<img src="https://cdn.jsdelivr.net/gh/light-307/pic@main/image/20210607164952.png" style="zoom: 25%;"/>
 
+**LLRB Runtime**
+* LLRB tree has height O(log N).
+* Contains is trivially O(log N).
+* Insert is O(log N).
+  * O(log N) to add the new node.
+  * O(log N) rotation and color flip operations per insert.
 
+<img src="https://cdn.jsdelivr.net/gh/light-307/pic@main/image/20210607165541.png"/>
+
+### **summary**
+<img src="https://cdn.jsdelivr.net/gh/light-307/pic@main/image/20210607170107.png"/>
+
+<br/>
+
+-----------------
+<br/>
+
+## **19. Range Searching and Multi-Dimensional Data**
+
+### QuadTree
+<img src="https://cdn.jsdelivr.net/gh/light-307/pic@main/image/20210607203121.png"/>
+
+### K-D Tree （K个维度的tree）
+插入时 每次比较一个维度，每过一级换一个维度比较。完全相同就替换，正在比较的维相等视作大于
+<img src="https://cdn.jsdelivr.net/gh/light-307/pic@main/image/20210607205636.png"/>
+
+### K-D Tree nearest method
+<img src="https://cdn.jsdelivr.net/gh/light-307/pic@main/image/20210607212414.png"/>
+
+<img src="https://cdn.jsdelivr.net/gh/light-307/pic@main/image/QQ%E6%88%AA%E5%9B%BE20210607213043.png"/>
+
+### summary
+<img src="https://cdn.jsdelivr.net/gh/light-307/pic@main/image/20210607215536.png"/>
 
 
 
