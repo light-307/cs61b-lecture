@@ -709,6 +709,8 @@ the overall runtime is **Θ(NlogN)**
 
 ## **16. ADTs, Sets, Maps, BSTs**
 
+**ADTs**: Abstract Data Types
+
 **Binary Search Trees  二叉树**
 ![](https://cdn.jsdelivr.net/gh/light-307/pic@main/image/20210528145451.png)
 
@@ -865,10 +867,129 @@ In tandem, these invariants cause the tree to always be **bushy**.
 ### K-D Tree nearest method
 <img src="https://cdn.jsdelivr.net/gh/light-307/pic@main/image/20210607212414.png"/>
 
+<img src="https://cdn.jsdelivr.net/gh/light-307/pic@main/image/QQ%E6%88%AA%E5%9B%BE20210609160239.png"/>
+
 <img src="https://cdn.jsdelivr.net/gh/light-307/pic@main/image/QQ%E6%88%AA%E5%9B%BE20210607213043.png"/>
 
 ### summary
 <img src="https://cdn.jsdelivr.net/gh/light-307/pic@main/image/20210607215536.png"/>
+
+<br/>
+
+-----------------
+<br/>
+
+## **20. Hashing**
+
+<img src="https://cdn.jsdelivr.net/gh/light-307/pic@main/image/QQ%E6%88%AA%E5%9B%BE20210610211831.png"/>
+
+<img src="https://cdn.jsdelivr.net/gh/light-307/pic@main/image/20210610210728.png"/>
+
+<img src="https://cdn.jsdelivr.net/gh/light-307/pic@main/image/20210610210806.png"/>
+
+
+### Two Important Warnings When Using HashMaps/HashSets
+
+Warning #1: Never store objects that can change in a HashSet or HashMap!
+* If an object’s variables changes, then its hashCode changes. May result in items getting lost.
+
+Warning #2: Never override equals without also overriding hashCode.
+* Can also lead to items getting lost and generally weird behavior.
+* HashMaps and HashSets use equals to determine if an item exists in a particular bucket.
+* See study guide problems.
+
+<img src="https://cdn.jsdelivr.net/gh/light-307/pic@main/image/20210610213801.png"/>
+
+<br/>
+
+-----------------
+<br/>
+
+## **21. Heaps and PQs**
+
+```java
+/** (Min) Priority Queue: Allowing tracking and removal of 
+  * the smallest item in a priority queue. */
+public interface MinPQ<Item> {
+    /** Adds the item to the priority queue. */
+    public void add(Item x);
+    /** Returns the smallest item in the priority queue. */
+    public Item getSmallest();
+    /** Removes the smallest item from the priority queue. */
+    public Item removeSmallest();
+    /** Returns the size of the priority queue. */
+    public int size();
+}
+```
+
+<img src="https://cdn.jsdelivr.net/gh/light-307/pic@main/image/20210611144534.png"/>
+
+### Heap Operations Summary
+
+Given a heap, how do we implement PQ operations?
+* getSmallest() - return the item in the root node.
+* add(x) - place the new employee in the last position, and promote as high as possible.
+* removeSmallest() - assassinate the president (of the company), promote the rightmost person in the company to president. Then demote repeatedly, always taking the ‘better’ successor.
+
+<img src="https://cdn.jsdelivr.net/gh/light-307/pic@main/image/20210611154306.png"/>
+
+<img src="https://cdn.jsdelivr.net/gh/light-307/pic@main/image/20210611154338.png"/>
+
+<img src="https://cdn.jsdelivr.net/gh/light-307/pic@main/image/QQ%E6%88%AA%E5%9B%BE20210611155133.png"/>
+
+### Data Structures Summary
+
+<img src="https://cdn.jsdelivr.net/gh/light-307/pic@main/image/20210611162333.png"/>
+
+<img src="https://cdn.jsdelivr.net/gh/light-307/pic@main/image/20210611162425.png"/>
+
+<br/>
+
+-----------------
+<br/>
+
+## **22. Prefix Operations and Tries**
+
+Suppose we know that our keys are always strings.
+* Can use a special data structure known as a Trie.
+* Basic idea: Store each letter of the string as a node in a tree.
+
+Tries will have great performance on:
+* get
+* add
+* special string operations
+
+
+<img src="https://cdn.jsdelivr.net/gh/light-307/pic@main/image/20210611203419.png"/>
+
+The DataIndexedCharMap Trie|The Hash-Table Based Trie|The BST-Based Trie
+:--:|:--:|:--:
+<img src="https://cdn.jsdelivr.net/gh/light-307/pic@main/image/20210611211151.png"/>|<img src="https://cdn.jsdelivr.net/gh/light-307/pic@main/image/20210611211505.png"/>|<img src="https://cdn.jsdelivr.net/gh/light-307/pic@main/image/20210611211557.png"/>
+
+<img src="https://cdn.jsdelivr.net/gh/light-307/pic@main/image/20210611212226.png"/>
+
+### string specific operation
+
+<img src="https://cdn.jsdelivr.net/gh/light-307/pic@main/image/20210612214043.png"/>
+
+<img src="https://cdn.jsdelivr.net/gh/light-307/pic@main/image/20210612214308.png"/>
+
+<img src="https://cdn.jsdelivr.net/gh/light-307/pic@main/image/20210612214455.png"/>
+
+### Autocomplete
+
+<img src="https://cdn.jsdelivr.net/gh/light-307/pic@main/image/20210612215414.png"/>
+
+<img src="https://cdn.jsdelivr.net/gh/light-307/pic@main/image/20210612215542.png"/>
+
+<img src="https://cdn.jsdelivr.net/gh/light-307/pic@main/image/20210612215612.png" style="zoom: 25%;"/>
+
+
+
+
+
+
+
 
 
 
