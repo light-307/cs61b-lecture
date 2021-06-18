@@ -984,6 +984,93 @@ The DataIndexedCharMap Trie|The Hash-Table Based Trie|The BST-Based Trie
 
 <img src="https://cdn.jsdelivr.net/gh/light-307/pic@main/image/20210612215612.png" style="zoom: 25%;"/>
 
+<br/>
+
+-----------------
+<br/>
+
+## **23. Tree and Graph Traversals**
+
+### Tree Traversal Orderings
+
+<img src="https://cdn.jsdelivr.net/gh/light-307/pic@main/image/20210618164028.png"/>
+
+* 前序遍历 Preorder: “Visit” a node, then traverse its children:  D B A C F E G
+  可以用来 print 文件目录结构
+```java
+preOrder(BSTNode x) {
+    if (x == null)
+        return;
+    print(x.key)
+    preOrder(x.left)
+    preOrder(x.right)
+}
+```
+
+* 中序遍历 Inorder traversal: Traverse left child, visit, then traverse right child: A B C D E F G
+```java
+inOrder(BSTNode x) {
+    if (x == null) 
+        return;
+    inOrder(x.left)
+    print(x.key)
+    inOrder(x.right)
+}
+```
+
+* 后序遍历 Postorder traversal: Traverse left, traverse right, then visit:  A C B E G F D
+  可以用来计算 文件目录中所有文件 总大小
+```java
+postOrder(BSTNode x) {
+    if (x == null) 
+        return;
+    postOrder(x.left)
+    postOrder(x.right)
+    print(x.key)
+}
+```
+<img src="https://cdn.jsdelivr.net/gh/light-307/pic@main/image/20210618174657.png"/>
+
+### graph
+
+**A tree** is a graph where there are no cycles and every vertex is connected.
+
+<img src="https://cdn.jsdelivr.net/gh/light-307/pic@main/image/20210618202053.png"/>
+
+### simple graph
+
+<img src="https://cdn.jsdelivr.net/gh/light-307/pic@main/image/20210618202528.png"/>
+
+<img src="https://cdn.jsdelivr.net/gh/light-307/pic@main/image/20210618203033.png"/>
+
+<img src="https://cdn.jsdelivr.net/gh/light-307/pic@main/image/20210618204044.png"/>
+
+### s-t Connectivity Problem （使用深度优先搜寻）
+One possible recursive algorithm for connected(s, t). 
+* Mark s.
+* Does s == t? If so, return true.
+* Otherwise, if connected(v, t) for any unmarked neighbor v of s, return true.
+* Return false.
+<img src="https://cdn.jsdelivr.net/gh/light-307/pic@main/image/20210618211119.png" style="zoom: 25%;"/>
+
+### Depth First Traversal 深度优先搜寻
+This idea of exploring a neighbor’s entire subgraph before moving on to the next neighbor is known as Depth First Traversal.
+* Example: Explore 1’s subgraph completely before using the edge 0-3.
+* Called “depth first” because you go as deep as possible.
+<img src="https://cdn.jsdelivr.net/gh/light-307/pic@main/image/20210618210950.png" style="zoom: 25%;"/>
+
+<img src="https://cdn.jsdelivr.net/gh/light-307/pic@main/image/20210618212142.png"/>+
+
+**DFS Preorder**: Action is before DFS calls to neighbors. One valid DFS preorder for this graph: 012543678
+
+**DFS Postorder**: Action is after DFS calls to neighbors. Results for dfs(0) would be: 347685210
+
+**BFS order**: Act in order of distance from s.
+* BFS stands for “breadth first search”.
+* Analogous to “level order”. Search is wide, not deep.
+* 0 1 24 53 68 7  
+
+
 
 
 
