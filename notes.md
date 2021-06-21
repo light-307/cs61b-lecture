@@ -1070,6 +1070,188 @@ This idea of exploring a neighbor’s entire subgraph before moving on to the ne
 * Analogous to “level order”. Search is wide, not deep.
 * 0 1 24 53 68 7  
 
+<br/>
+
+-----------------
+<br/>
+
+## **24. Graph Traversals and Implementations**
+
+**queue**(队列): enqueue (addLast),  dequeue (removeFirst)  先进先出
+
+**stack**(堆栈): push (addFirst), pop (removeFirst)  后进先出
+
+### **BFS** - BreadthFirstPaths Demo
+<img src="https://cdn.jsdelivr.net/gh/light-307/pic@main/image/20210621134355.png"/>
+
+**API** (Application Programming Interface)
+
+<img src="https://cdn.jsdelivr.net/gh/light-307/pic@main/image/20210621141939.png"/>
+
+**We used the Princeton algorithms book API today** （这节课使用普林斯顿的课的interface）
+
+<img src="https://cdn.jsdelivr.net/gh/light-307/pic@main/image/20210621160109.png"/>
+
+```java {.line-numbers}
+public class Graph {
+  public Graph(int V):               Create empty graph with v vertices
+  public void addEdge(int v, int w): add an edge v-w
+  Iterable<Integer> adj(int v):      vertices adjacent to v
+  int V():                           number of vertices
+  int E():                           number of edges
+...
+```
+
+Adjacency lists
+<img src="https://cdn.jsdelivr.net/gh/light-307/pic@main/image/20210621142913.png"/>
+
+<img src="https://cdn.jsdelivr.net/gh/light-307/pic@main/image/20210621143425.png"/>
+
+<img src="https://cdn.jsdelivr.net/gh/light-307/pic@main/image/20210621143955.png"/>
+
+### Bare-Bones Undirected Graph Implementation
+```java {.line-numbers}
+public class Graph {
+	private final int V;  private List<Integer>[] adj;
+	
+	public Graph(int V) {
+    	    this.V = V;
+    	    adj = (List<Integer>[]) new ArrayList[V];
+    	    for (int v = 0; v < V; v++) {
+             adj[v] = new ArrayList<Integer>();
+         }
+	} 
+
+	public void addEdge(int v, int w) {
+         adj[v].add(w);   adj[w].add(v);
+	}
+
+	public Iterable<Integer> adj(int v) {
+        return adj[v];
+	}
+}
+```
+
+### Depth First Search Implementation
+
+Common design pattern in graph algorithms: Decouple type from processing algorithm.
+* Create a graph object.
+* Pass the graph to a graph-processing method (or constructor) in a client class.
+* Query the client class for information.
+
+<img src="https://cdn.jsdelivr.net/gh/light-307/pic@main/image/20210621150650.png"/>
+
+```java {.line-numbers}
+public class DepthFirstPaths {
+  private boolean[] marked;
+  private int[] edgeTo;
+  private int s;
+ 	
+  public DepthFirstPaths(Graph G, int s) {
+      ...
+      dfs(G, s);
+  }
+  private void dfs(Graph G, int v) {
+    marked[v] = true;
+    for (int w : G.adj(v)) {
+      if (!marked[w]) {
+        edgeTo[w] = v;
+        dfs(G, w);
+      }        	
+    } 
+  }
+  public Iterable<Integer> pathTo(int v) {
+    if (!hasPathTo(v)) return null;
+    List<Integer> path = new ArrayList<>();
+    for (int x = v; x != s; x = edgeTo[x]) {
+      path.add(x);
+    }
+    path.add(s);
+    Collections.reverse(path);
+    return path;
+  }
+
+  public boolean hasPathTo(int v) {
+    return marked[v];
+  }
+}
+```
+
+<img src="https://cdn.jsdelivr.net/gh/light-307/pic@main/image/20210621154740.png"/>
+
+### BreadthFirstPaths Implementation
+
+<img src="https://cdn.jsdelivr.net/gh/light-307/pic@main/image/20210621154956.png"/>
+
+```java {.line-numbers}
+public class BreadthFirstPaths {
+  private boolean[] marked;
+  private int[] edgeTo;
+  ...
+	
+  private void bfs(Graph G, int s) {
+  Queue<Integer> fringe = 
+          new Queue<Integer>();
+  fringe.enqueue(s);
+  marked[s] = true;
+  while (!fringe.isEmpty()) {
+    int v = fringe.dequeue();
+    for (int w : G.adj(v)) {
+      if (!marked[w]) {
+        fringe.enqueue(w);
+        marked[w] = true;
+        edgeTo[w] = v;
+      }
+    }
+  }
+}
+```
+
+DFS 和 BFS 的效率一样，而且 BFS 能找到最优路径，所以一般直接用 BFS，除非是只需要确定有没有路径
+不过这两个都不适合用来在实际地图中寻路，因为实际的各条路的长度是不同的等等
+
+<img src="https://cdn.jsdelivr.net/gh/light-307/pic@main/image/20210621155311.png"/>
+
+
+<br/>
+
+-----------------
+<br/>
+
+## **25. Shortest Paths**
+
+SPT: **Shortest Paths Tree**
+一个有 V 个点的图，其起点为 s 的最短路径树有 V-1 条边
+
+### **Dijkstra’s Algorithm**: 
+Perform a best first search (closest first).
+* Insert all vertices into fringe PQ, storing vertices in order of distance from source.
+* Repeat: Remove (closest) vertex v from PQ, and relax all edges pointing from v.
+
+在当前节点找到起点距离最小的下一个节点，一直找到头，然后返回
+只有路径没有 负权重 的时候这个算法才是正确的
+
+<img src="https://cdn.jsdelivr.net/gh/light-307/pic@main/image/20210621195057.png"/>
+
+<img src="https://cdn.jsdelivr.net/gh/light-307/pic@main/image/20210621202908.png"/>
+
+<img src="https://cdn.jsdelivr.net/gh/light-307/pic@main/image/20210621204320.png"/>
+
+### A*
+
+<img src="https://cdn.jsdelivr.net/gh/light-307/pic@main/image/20210621211134.png"/>
+
+<img src="https://cdn.jsdelivr.net/gh/light-307/pic@main/image/20210621212053.png"/>
+
+<img src="https://cdn.jsdelivr.net/gh/light-307/pic@main/image/20210621212936.png"/>
+
+### Graph Problems summary
+<img src="https://cdn.jsdelivr.net/gh/light-307/pic@main/image/20210621212811.png"/>
+
+
+
+
+
 
 
 
