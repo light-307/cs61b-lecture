@@ -36,7 +36,8 @@ public class DogLauncher {
 }
 ```
 
-静态方法与实例方法。静态方法和实例方法之间的区别非常重要。实例方法是只能由类的实例（即特定对象）采取的操作，而静态方法则由类本身采取。使用对特定实例的引用来调用实例方法，例如`d.bark()`，而静态方法应使用类名来调用（例如）`Math.sqrt()`
+静态方法与实例方法。静态方法和实例方法之间的区别非常重要。实例方法是只能由类的实例（即特定对象）采取的操作，而静态方法则由类本身采取。使用对特定实例的引用来调用实例方法，例如`d.bark()`，而静态方法应使用类名来调用（例如）`Math.sqrt()`     
+static variables（静态变量）也类似，所有对象共享静态变量，各个对象单独享有各自的实例变量
 
 Static vs. Instance methods. The distinction between static and instance methods is incredibly important. Instance methods are actions that can only be taken by an instance of the class (i.e. a specific object), whereas static methods are taken by the class itself. An instance method is invoked using a reference to a specific instance, e.g. `d.bark()`, whereas static methods should be invoked using the class name, e.g. `Math.sqrt()`
 
@@ -976,6 +977,73 @@ The DataIndexedCharMap Trie|The Hash-Table Based Trie|The BST-Based Trie
 
 <img src="https://cdn.jsdelivr.net/gh/light-307/pic@main/image/20210612214455.png"/>
 
+```java {.line-numbers}
+public class Trie {
+    private final Map<Character, Trie> nextNodes = new HashMap<>();
+    private boolean isWordEnd = false;
+
+    public Trie() {
+    }
+
+    /**
+        * Inserts a word into the trie.
+        */
+    public void insert(String word) {
+        Trie current = this;
+        Trie next;
+        for (char c : word.toCharArray()) {
+            next = current.nextNodes.getOrDefault(c, new Trie());
+            current.nextNodes.put(c, next);
+            current = next;
+        }
+        current.isWordEnd = true;
+    }
+
+    /**
+        * Returns if the word is in the trie.
+        */
+    public boolean search(String word) {
+        Trie current = this;
+        for (char c: word.toCharArray()) {
+            if (!current.nextNodes.containsKey(c)) {
+                return false;
+            }
+            current = current.nextNodes.get(c);
+        }
+        return current.isWordEnd;
+    }
+
+    /**
+        * Returns words in the trie that starts with the given prefix.
+        */
+    public List<String> KeysWithPrefix(String prefix) {
+        List<String> x = new LinkedList<>();
+
+        Trie current = this;
+        for (char c: prefix.toCharArray()) {
+            if (!current.nextNodes.containsKey(c)) {
+                return x;
+            }
+            current = current.nextNodes.get(c);
+        }
+
+        for (char c : current.nextNodes.keySet()) {
+            colHelp(prefix+c, x, current.nextNodes.get(c));
+        }
+
+        return x;
+    }
+    public void colHelp(String s, List<String> x, Trie n) {
+        if (n.isWordEnd) {
+            x.add(names.get(s));
+        }
+        for (char c : n.nextNodes.keySet()) {
+            colHelp(s+c, x, n.nextNodes.get(c));
+        }
+    }
+}
+```
+
 ### Autocomplete
 
 <img src="https://cdn.jsdelivr.net/gh/light-307/pic@main/image/20210612215414.png"/>
@@ -1243,12 +1311,430 @@ Perform a best first search (closest first).
 
 <img src="https://cdn.jsdelivr.net/gh/light-307/pic@main/image/20210621212053.png"/>
 
+<img src="https://cdn.jsdelivr.net/gh/light-307/pic@main/image/20210622212012.png"/>
+
 <img src="https://cdn.jsdelivr.net/gh/light-307/pic@main/image/20210621212936.png"/>
 
 ### Graph Problems summary
 <img src="https://cdn.jsdelivr.net/gh/light-307/pic@main/image/20210621212811.png"/>
 
+<br/>
 
+-----------------
+<br/>
+
+## **26. Minimum Spanning Trees**
+
+Given an **undirected** graph, a **spanning tree** T is a subgraph of G, where T:
+* Is connected.
+* Is acyclic（非循环）.
+* Includes all of the vertices.
+前两点使其为 tree，后一点使其 spanning
+
+A **minimum spanning tree**（最小生成树） is a spanning tree of minimum total weight.
+
+<img src="https://cdn.jsdelivr.net/gh/light-307/pic@main/image/20210629204057.png"/>
+
+
+### Generic MST Finding Algorithm
+
+Start with no edges in the MST.
+* Find a cut that has no crossing edges in the MST. 
+* Add smallest crossing edge to the MST.
+* Repeat until V-1 edges.
+
+This should work, but we need some way of finding a cut with no crossing edges!
+
+### Prim’s Algorithm
+
+<img src="https://cdn.jsdelivr.net/gh/light-307/pic@main/image/20210629211046.png"/>
+
+<img src="https://cdn.jsdelivr.net/gh/light-307/pic@main/image/20210629213012.png"/>
+
+### Prim’s vs. Dijkstra’s
+
+Prim’s and Dijkstra’s algorithms are exactly the same, except Dijkstra’s considers “distance from the source”, and Prim’s considers “distance from the tree.”
+
+Visit order:
+* Dijkstra’s algorithm visits vertices in order of distance from the source.
+* Prim’s algorithm visits vertices in order of distance from the MST under construction.
+
+Relaxation:
+* Relaxation in Dijkstra’s considers an edge better based on distance to source.
+* Relaxation in Prim’s considers an edge better based on distance to tree.
+
+<img src="https://cdn.jsdelivr.net/gh/light-307/pic@main/image/20210630190256.png"/>
+
+<img src="https://cdn.jsdelivr.net/gh/light-307/pic@main/image/20210630190330.png"/>
+
+```java {.line-numbers}
+public class PrimMST {
+  public PrimMST(EdgeWeightedGraph G) {
+    edgeTo = new Edge[G.V()];
+    distTo = new double[G.V()];
+    marked = new boolean[G.V()];
+    fringe = new SpecialPQ<Double>(G.V());
+ 
+    distTo[s] = 0.0;
+    setDistancesToInfinityExceptS(s);
+    insertAllVertices(fringe);
+ 
+    /* Get vertices in order of distance from tree. */
+    while (!fringe.isEmpty()) {
+      int v = fringe.delMin();
+      scan(G, v);
+    } 
+  }
+  private void scan(EdgeWeightedGraph G, int v) {
+    marked[v] = true;
+    for (Edge e : G.adj(v)) {
+      int w = e.other(v);
+      if (marked[w]) { continue; } 
+      if (e.weight() < distTo[w]) {
+        distTo[w] = e.weight();
+        edgeTo[w] = e;
+        pq.decreasePriority(w, distTo[w]);
+      }
+    }
+  }
+}
+```
+
+<img src="https://cdn.jsdelivr.net/gh/light-307/pic@main/image/20210630190740.png"/>
+
+### Kruskal’s Algorithm
+
+<img src="https://cdn.jsdelivr.net/gh/light-307/pic@main/image/20210630192219.png"/>
+
+```java {.line-numbers}
+public class KruskalMST {
+  private List<Edge> mst = new ArrayList<Edge>();
+ 
+  public KruskalMST(EdgeWeightedGraph G) {
+    MinPQ<Edge> pq = new MinPQ<Edge>();
+    for (Edge e : G.edges()) {
+      pq.insert(e);
+    }
+    WeightedQuickUnionPC uf = 
+             new WeightedQuickUnionPC(G.V());
+    while (!pq.isEmpty() && mst.size() < G.V() - 1) {
+      Edge e = pq.delMin();
+      int v = e.from();
+      int w = e.to();
+      if (!uf.connected(v, w)) {
+        uf.union(v, w);
+        mst.add(e); 
+} } } }
+```
+
+<img src="https://cdn.jsdelivr.net/gh/light-307/pic@main/image/20210630193022.png"/>
+
+### Shortest Paths and MST Algorithms Summary
+
+| Problem        | Algorithm                       | Runtime (if E > V) | Notes                            |
+|----------------|---------------------------------|--------------------|----------------------------------|
+| Shortest Paths | Dijkstra’s                      | O(E log V)         | Fails for negative weight edges. |
+| MST            | Prim’s                          | O(E log V)         | Analogous to Dijkstra’s.         |
+| MST            | Kruskal’s                       | O(E log E)         | Uses WQUPC.                      |
+| MST            | Kruskal’s with pre-sorted edges | O(E log* V)        | Uses WQUPC.                      |
+
+<br/>
+
+-----------------
+<br/>
+
+## **27. Software Engineering I**
+
+### Strategic Programming （战略编程）
+The first step towards becoming a good software designer is to realize that working code isn’t enough.
+* The most important thing is the long term structure of the system.
+* Adding complexities to achieve short term time games is unacceptable.
+
+For each new class/task:
+* Rather than implementing the first idea, try coming up with (and possibly even partially implementing) a few different ideas.
+* When you feel like you have found something that feels clean, then fully implement that idea.
+* In real systems: Try to imagine how things might need to be changed in the future, and make sure your design can handle such changes.
+
+No matter how careful you try to be, there will be mistakes in your design.
+* Avoid the temptation(诱惑) to patch(打补丁) around these mistakes. Instead, fix the design.
+    * Example: Don’t add a bunch of special cases! Instead, make sure the system gracefully handles the cases you didn’t think about.
+    * Specific example: Adding sentinel nodes to SLLists.
+* Indeed, it is impossible to design large software systems entirely in advance.
+
+<br/>
+
+-----------------
+<br/>
+
+## **28. Reductions and Decomposition**
+
+### Topological Sort (拓扑排序)
+
+<img src="https://cdn.jsdelivr.net/gh/light-307/pic@main/image/20210701205511.png"/>
+
+Another better topological sort algorithm:
+* Run DFS from an arbitrary vertex.
+* If not all marked, pick an unmarked vertex and do it again.
+* Repeat until done.
+
+A topological sort only **exists** if the graph is a **directed acyclic graph** （**DAG 有向无环图**）.
+
+
+### Shortest Paths on DAGs
+
+If we allow negative edges, Dijkstra’s algorithm can fail.
+
+One simple idea: Visit vertices in topological order.
+* On each visit, relax all outgoing edges.
+* Each vertex is visited only when all possible info about it has been used!
+
+<img src="https://cdn.jsdelivr.net/gh/light-307/pic@main/image/20210703143100.png"/>
+
+
+### Longest Paths
+
+Consider the problem of finding the longest path tree (LPT) from s to every other vertex. The path must be simple (no cycles!).
+
+Some surprising facts:
+* Best known algorithm is exponential (指数级) (extremely bad).
+* Perhaps the most important unsolved problem in mathematics.
+
+#### The Longest Paths Problem on DAGs
+
+DAG LPT solution for graph G:   把所有路径权重取负，然后跑求最短路径的算法
+* Form a new copy of the graph G’ with signs of all edge weights flipped.
+* Run DAGSPT on G’ yielding result X.
+* Flip signs of all values in X.distTo. X.edgeTo is already correct. 
+
+<img src="https://cdn.jsdelivr.net/gh/light-307/pic@main/image/20210703144409.png"/>
+
+<br/>
+
+-----------------
+<br/>
+
+## **29. Basic Sorts**
+
+**Selection Sort**
+* Find smallest item.
+* Swap this item to the front and ‘fix’ it.
+* Repeat for unfixed items until all items are fixed.
+* **Θ(N^2)** ***time*** if we use an array (or similar data structure).
+
+<br>
+
+**Naive Heapsort**: Leveraging (借用) a Max-Oriented Heap
+* Idea: Instead of rescanning entire array looking for minimum, maintain a heap so that getting the minimum is fast!
+
+Naive heapsorting N items: 
+* Insert all items into a max heap, and discard input array. Create output array.
+* Repeat N times:
+  * Delete largest item from the max heap.
+  * Put largest item at the end of the unused part of the output array.
+* ***Overall runtime*** is O(N log N) + Θ(N) + O(N log N) = **O(N log N)**
+* ***Memory usage*** is **Θ(N)** to build the additional copy of all of our data.
+
+<br>
+
+**In-place Heapsort**
+Alternate approach, treat input array as a heap!
+* Rather than inserting into a new array of length N + 1, use a process known as “bottom-up heapification” to convert the array into a heap. 
+  * To bottom-up heapify, just sink nodes in reverse level order.
+* Avoids need for extra copy of all data. (不需要额外内存)
+* Once heapified, algorithm is almost the same as naive heap sort. 
+
+直接把输入数组当做一个未完成的 Heap，从最下层到上层把每个元素按大小往下沉，最后变成一个正确的 MaxHeap
+然后 removeFirst，把最大的值放到数组最后，把换上来的 MaxHeap 中最后的那个放到第一再下沉。
+
+* overall runtime is **O(N log N)**.
+
+<br>
+
+**Mergesort**
+* Split items into 2 roughly even pieces.
+* Mergesort each half (steps not shown, this is a recursive algorithm!)
+* Merge the two sorted halves to form the final result.
+
+***Time*** complexity: **Θ(N log N** runtime)
+Space complexity with aux array: Costs **Θ(N)** ***memory***.
+
+<br>
+
+**Insertion Sort**
+General strategy: 
+* Starting with an empty output sequence.
+* Add each item from input, inserting into output at right point (正确的地方).
+
+More efficient method (**In-place Insertion Sort**):
+* Do everything in place using swapping 在原数组中一个一个往前swap，直到位置正确
+* Repeat for i = 0 to N - 1:
+  * Designate (指派) item i as the traveling item.
+  * Swap item backwards until traveller is in the right place among all previously examined items.
+
+***runtime*** of insertion sort **Ω(N), O(N^2)**
+
+For arrays that are almost sorted, insertion sort does very little work.
+针对差不多排好的数组，用 insertion sort 相当快
+
+Less obvious: For small arrays (N < 15 or so), insertion sort is fastest.
+* More of an empirical fact than a theoretical one.
+* Theoretical analysis beyond scope of the course.
+* Rough idea: Divide and conquer algorithms like heapsort / mergesort spend too much time dividing, but insertion sort goes straight to the conquest.
+很小的数组用 Insertion Sort 是最快的，由实际经验得出。所以像 mergesort 之类的在细分到15个元素以内后，一般会切换到 Insertion Sort
+
+<br>
+
+**Shell’s Sort** : Optimizing Insertion Sort
+Big idea: Fix multiple inversions （倒置） at once.
+* Instead of comparing adjacent（相邻） items, compare items that are one stride length h apart. 
+* Start with large stride, and decrease towards 1.
+* Example: h = 7, 3, 1.
+从大的间隔开始排，然后慢慢排间隔小的
+
+<img src="https://cdn.jsdelivr.net/gh/light-307/pic@main/image/20210703211256.png"/>
+
+h=1 is just normal insertion sort.
+* By using large strides first, fixes most of the inversions.
+
+We used 7, 3, 1. Can generalize to 2k - 1 from some k down to 1.
+* Requires Θ(N1.5) time in the worst case (see CS170).
+* Other stride patterns can be faster.
+
+<img src="https://cdn.jsdelivr.net/gh/light-307/pic@main/image/20210703211432.png"/>
+
+<br/>
+
+-----------------
+<br/>
+
+## **30. Quick Sort**
+
+### Backstory, Partitioning
+
+Quicksort:  Much stranger core idea: Partitioning （分区）.
+
+**Partitioning**
+<img src="https://cdn.jsdelivr.net/gh/light-307/pic@main/image/20210705161437.png"/>
+
+### Quicksort
+
+Quicksorting N items: 
+* Partition on leftmost item. 
+* Quicksort left half.
+* Quicksort right half.
+
+Theoretical analysis:
+* Best case: Θ(N log N)
+* Worst case: Θ(N^2)
+* But on average it is Θ(N log N). Randomly chosen array case: Θ(N log N) expected
+
+Quicksort is Partitioning Sort, Quicksort is BST Sort. 
+
+### Avoiding the Quicksort Worst Case （在后面的课中更详细地讲述）
+
+If pivot always lands somewhere “good”, Quicksort is Θ(N log N). However, the very rare Θ(N2) cases do happen in practice, e.g.
+* Bad ordering: Array already in sorted order (or almost sorted order).
+* Bad elements: Array with all duplicates（重复）. 
+
+What can we do to avoid worst case behavior?
+* Always use the median as the pivot（支点） -- this works.
+* Randomly swap two indices occasionally.
+    * Sporadic（零星的） randomness. Maybe works?
+* Shuffle（洗牌） before quicksorting.
+  * This definitely works and is a harder core version of the above.
+
+<br/>
+
+-----------------
+<br/>
+
+## **31. Software Engineering II**
+
+### Build Your Own World
+
+There are two primary sources of complexity:
+* **Dependencies**: When a piece of code cannot be read, understood, and modified independently.
+* **Obscurity**: When important information is not obvious.
+
+不要用一大堆的标志位和 if-else 之类的，把任务分块，变成一些可以独立调试的 helper_method
+
+记得用 interface 之类的 Java 特性
+
+### Modular Design
+
+Ousterhout: “The best modules are those that provide powerful functionality yet have simple interfaces. I use the term ***deep*** to describe such modules.”
+
+The most important way to make your modules deep is to practice “information hiding”. 
+* Embed knowledge and design decision in the module itself, without exposing them to the outside world.
+
+<img src="https://cdn.jsdelivr.net/gh/light-307/pic@main/image/20210705195119.png"/>
+
+Ousterhout: 
+* “Information leakage is one of the most important red flags in software design.”
+* “One of the best skills you can learn as a software designer is a high level of sensitivity to information leakage.”
+
+<br/>
+
+-----------------
+<br/>
+
+## **32. More Quick Sort, Sorting Summary**
+
+What can we do to avoid running into the worst case for QuickSort?
+
+Four philosophies(观点):
+1. **Randomness**: Pick a random pivot or shuffle before sorting.
+2. **Smarter pivot selection**: Calculate or approximate the median.
+3. **Introspection**(内省): Switch to a safer sort if recursion goes to deep.
+4. **Preprocess the array**: Could analyze array to see if Quicksort will be slow. No obvious way to do this, though (can’t just check if array is sorted, almost sorted arrays are almost slow).
+
+<img src="https://cdn.jsdelivr.net/gh/light-307/pic@main/image/20210706100507.png"/>
+
+<img src="https://cdn.jsdelivr.net/gh/light-307/pic@main/image/20210706101416.png"/>
+
+<img src="https://cdn.jsdelivr.net/gh/light-307/pic@main/image/20210706110725.png"/>
+
+### Tony Hoare’s In-place Partitioning Scheme
+<img src="https://cdn.jsdelivr.net/gh/light-307/pic@main/image/20210706134242.png"/>
+
+<img src="https://cdn.jsdelivr.net/gh/light-307/pic@main/image/20210706134432.png"/>
+
+
+### Quicksort vs. Mergesort
+
+<img src="https://cdn.jsdelivr.net/gh/light-307/pic@main/image/20210706141721.png"/>
+
+Using Tony Hoare’s two pointer scheme, Quicksort is better than mergesort!
+* More recent pivot/partitioning schemes do somewhat better. 
+  * Best known Quicksort uses a two-pivot scheme.
+
+Quicksort using PICK to find the exact median (Quicksort PickTH) is terrible!
+* Cost to compute medians is too high.
+* Have to live with worst case Θ(N2) if we want good practical performance.
+
+
+### Quick Select
+
+<img src="https://cdn.jsdelivr.net/gh/light-307/pic@main/image/20210706141904.png"/>
+
+Worst asymptotic performance Θ(N^2) occurs if array is in sorted order. 
+
+On average, Quick Select will take Θ(N) time. 
+Quick Select 加上洗牌之类的 random 后是最快的找中位数的算法
+
+
+### Stability, Adaptiveness, Optimization
+
+A sort is said to be **stable** if order of equivalent items is preserved（排序后数组中相同大小的元素原来的前后顺序没变）.
+
+<img src="https://cdn.jsdelivr.net/gh/light-307/pic@main/image/20210706143524.png"/>
+
+<br/>
+
+-----------------
+<br/>
+
+## **33. Software Engineering III**
 
 
 
@@ -1315,7 +1801,11 @@ Markdown 段首缩进：
 &emsp;&emsp; 两个全角的空格（用的比较多）
 &nbsp; or &#160; 不断行的空白格
 
-
+Markdown 表格
+| Syntax      | Description | Test Text     |
+| :---        |    :----:   |          ---: |
+| Header      | Title       | Here's this   |
+| Paragraph   | Text        | And more      |
 
 
 
