@@ -1532,6 +1532,7 @@ Naive heapsorting N items:
   * Delete largest item from the max heap.
   * Put largest item at the end of the unused part of the output array.
 * ***Overall runtime*** is O(N log N) + Θ(N) + O(N log N) = **O(N log N)**
+* 对于所有值都一样的，这种 best case 是 **Θ(N)**
 * ***Memory usage*** is **Θ(N)** to build the additional copy of all of our data.
 
 <br>
@@ -1729,6 +1730,9 @@ A sort is said to be **stable** if order of equivalent items is preserved（排�
 
 <img src="https://cdn.jsdelivr.net/gh/light-307/pic@main/image/20210706143524.png"/>
 
+Selection Sort 不稳定，因为会有把最小的直接往最前面 swap 的操作
+
+
 <br/>
 
 -----------------
@@ -1736,9 +1740,233 @@ A sort is said to be **stable** if order of equivalent items is preserved（排�
 
 ## **33. Software Engineering III**
 
+<br/>
+
+-----------------
+<br/>
+
+## **34. Sorting and Algorithmic Bounds**
+
+排序算法的 worst case 讨论：
+* 设有 N 个元素需要排序，那么共有 N！种可能的顺序。
+* 将这些可能塞到二叉树里作为叶子（二叉树的其余是 `is a>b ?` 这样的用于比较排序的问题）
+* 那么最少需要 $log_2(N!)$ 层的二叉树，也即最少需要 $\varOmega(log_2(N!)) = \varOmega(NlogN)$ 次比较操作
+* 综上，最好的排序算法的 worst case 是 $\varTheta(NlogN)$
+
+<img src="https://cdn.jsdelivr.net/gh/light-307/pic@main/image/20210708212900.png"/>
+
+<br/>
+
+-----------------
+<br/>
+
+## **35. Radix Sorts**
+
+### Counting Sort
+
+如果不需要用到 compare (比较) 操作，那么是可以达到 $\varTheta(N)$ 的
+比如 有N个东西，它们的标号是 0~N-1，可以直接创建大小为 N 的数组，把它们直接按标号放进去
+
+<br/>
+
+Counting sort:
+* Count number of occurrences of each item.
+* Iterate through list, using count array to decide where to put everything.
+* Bottom line, we can use counting sort to sort N objects in Θ(N) time. 
+
+<img src="https://cdn.jsdelivr.net/gh/light-307/pic@main/image/20210709151507.png"/>
+
+Total runtime on N keys with alphabet of size R（不同的key值的数量）: Θ(N+R)
+* Create an array of size R to store counts: Θ(R)
+* Counting number of each item: Θ(N)
+* Calculating target positions of each item: Θ(R)
+* Creating an array of size N to store ordered data: Θ(N)
+* Copying items from original array to ordered array: Do N times:
+  * Check target position: Θ(1)
+  * Update target position: Θ(1)
+* Copying items from ordered array back to original array: Θ(N)
+
+Memory usage: Θ(N+R)
+
+Bottom line: If N is ≥ R, then we expect reasonable performance.
+
+### LSD Radix Sort 从最低位开始
+
+LSD (Least Significant Digit 最低位有效数字) Radix(基数) Sort -- Using Counting Sort
+从最低位开始，对每位数做 Counting Sort（Counting Sort is stable）
+
+runtime of LSD sort: 
+* Θ(WN+WR)
+* N: Number of items, R: size of alphabet, W: Width of each item in # digits
+
+### MSD (Most Significant Digit) Radix Sort 从最高位开始
+
+Key idea: Sort each subproblem separately. 
+从高位开始，对上一位相同的各组分别做排序
+
+<img src="https://cdn.jsdelivr.net/gh/light-307/pic@main/image/20210709163044.png"/>
+
+<br/>
+
+-----------------
+<br/>
+
+## **36. Sorting and Data Structures Conclusion**
+
+### Intuitive(直觉的): Radix Sort vs. Comparison Sorting
+
+Merge Sort requires Θ(N log N) compares.
+
+What is Merge Sort’s runtime on strings of length W?
+* It depends!
+  * Θ(N log N) if each comparison takes constant time.
+    * Example: Strings are all different in top character.
+  * Θ(WN log N) if each comparison takes Θ(W) time.
+    * Example: Strings are all equal.
+
+<br/>
+
+The facts:
+* Treating alphabet size as constant, LSD Sort has runtime Θ(WN). 
+* Merge Sort is between Θ(N log N) and Θ(WN log N).
+
+Which is better? It depends.
+* When might LSD sort be faster?
+  * Sufficiently large N.
+  * If strings are very similar to each other.
+    * Each Merge Sort comparison costs Θ(W) time.
+* When might Merge Sort be faster?
+  * If strings are highly dissimilar from each other. 
+    * Each Merge Sort comparison is very fast.
+
+### Cost Model: Radix Sort vs. Comparison Sorting
+
+An alternate approach is to pick a cost model.
+* We’ll use number of characters examined.
+* By “examined”, we mean:
+  * Radix Sort: Calling charAt in order to count occurrences of each character.
+  * Merge Sort: Calling charAt in order to compare two Strings.
+
+<br/>
+
+For N equal strings of length 1000, we found that:
+* MSD radix sort will examine ~1000N characters (For N= 100: 100,000).
+* Merge sort will examine ~1000Nlog2(N) characters (For N=100: 660,000).
+
+### Empirical Study: Radix Sort vs. Comparison Sorting
+
+对字符的比较操作的数量确实像前面算的那样，但实际上 Merge sort 跑得快得多。
+* 因为还有大量的诸如创建数组、复制、缓存之类的操作，
+* 以及java的 The “**Just In Time(JIT)**” Compiler
+  * java 编译之后，在 Interpreter(解释器) 里跑的时候，会 study and re-implement your code based on what it learned by watching WHILE ITS RUNNING (!!).
+  * 比如重复创建长度为1000的链表几百次，跑到一定的次数后 java 认为你实际上没有用到创建的这些东西，之后就自动停止创建新的链表
+
+### Rerunning Our Empirical Study With No JIT
+
+关掉JIT之后两者都变慢了，然后在上述的比较大量重复字符串的任务中，Merge sort 确实如预料般比 MSD radix sort 慢
+
+**Bottom Line: Algorithms Can Be Hard to Compare**
+Comparing algorithms that have the same order of growth is challenging.
+* Have to perform computational experiments.
+* In modern programming environments, experiments can be tricky due to optimizations like the JIT in Java.
+
+Note: There’s always the chance that some small optimization to an algorithm can make it significantly faster.
+
+### Sorting Summary
+
+<img src="https://cdn.jsdelivr.net/gh/light-307/pic@main/image/20210709205650.png"/>
+
+<br/>
+
+-----------------
+<br/>
+
+## **38. Compression(压缩)**
+
+### Prefix Free Codes
+
+A **prefix-free(无前缀) code** is one in which no codeword is a prefix of any other. 
+例如：没有任何一个字母的二进制码是另一个字母的二进制码的前缀 像这样的编码方式
 
 
+### Shannon Fano Codes 
 
+<img src="https://cdn.jsdelivr.net/gh/light-307/pic@main/image/20210712142416.png"/>
+
+### Huffman Coding
+
+<img src="https://cdn.jsdelivr.net/gh/light-307/pic@main/image/20210712143339.png"/>
+
+### Huffman Coding Data Structures
+
+编码的时候可以用 **Map**。 
+* **hashmap**慢一点，占用空间小；
+* **array** (用字符的index去对应转换后的二进制码) 更快，占用空间稍大，更倾向于用这个
+
+解码的时候可以用 **trie**
+
+### Huffman Coding in Practice
+
+Two possible philosophies for using Huffman Compression:
+1. Build one corpus per input type.
+2. For every possible input file, create a unique code just for that file. Send the code along with the compressed file.
+第二种用的多一点
+
+### Compression Theory
+
+为了比较不同的压缩算法，把某个压缩算法的解码代码和压缩后产生的数据流视为一个整体，然后去比较这个整体
+
+<br/>
+
+-----------------
+<br/>
+
+## **39. Compression, Complexity, and P=NP?**
+
+<img src="https://cdn.jsdelivr.net/gh/light-307/pic@main/image/20210714163315.png"/>
+
+<img src="https://cdn.jsdelivr.net/gh/light-307/pic@main/image/20210714163355.png"/>
+
+
+### Optimal Compression and Kolmogorov Complexity 
+
+<img src="https://cdn.jsdelivr.net/gh/light-307/pic@main/image/20210714164435.png"/>
+
+Fact #1: Kolmogorov Complexity is effectively **independent** of language.
+
+Fact #2: It is **impossible** to write a program that even calculates the Kolmogorov Complexity of any bitstream. 
+* Corollary: If we can’t even compute the length of the shortest program, it is also **impossible** to write the “perfect” compression algorithm. 
+
+
+### Space/Time Bounded Compression 
+
+<img src="https://cdn.jsdelivr.net/gh/light-307/pic@main/image/20210714165918.png"/>
+
+<img src="https://cdn.jsdelivr.net/gh/light-307/pic@main/image/20210714170000.png"/>
+
+<img src="https://cdn.jsdelivr.net/gh/light-307/pic@main/image/20210714170032.png"/>
+
+
+### P = NP? 
+
+Two important classes of yes/no problems:
+* P: Efficiently solvable problems.
+* NP: Problems with solutions that are efficiently verifiable(可以用有效率的方式验证).*
+
+Examples of problems in P:
+* Is this array sorted?
+* Does this array have duplicates?
+
+Examples of problems in NP:
+* Is there a solution to this 3SAT problem?
+* In graph G, does there exist a path from s to t of weight > k?
+
+*: Technically it’s problems for a which a “yes” answer is efficiently verifiable.
+
+**P = NP? 问题：**
+* 针对 能够用有效率的方式验证回答是否正确的问题，能否找到该问题的有效率的解答？3
+
+所有的数学证明都是NP问题，所以如果 P = NP 被解决了，其他的也都被解决了233
 
 
 
@@ -1756,6 +1984,8 @@ A sort is said to be **stable** if order of equivalent items is preserved（排�
 <br/>
 
 # Markdown 基础语法
+
+https://katex.org/docs/supported.html   Markdown Preview Enhanced 的数学公式写法
 
 Markdown 目录：
 [TOC]
@@ -1790,6 +2020,7 @@ Markdown 引用：
 > 引用内容
 
 Markdown 分割线：
+
 ---
 
 Markdown 换行：
